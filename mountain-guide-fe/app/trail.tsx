@@ -1,15 +1,15 @@
 import { StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 
-const Community = () => {
+const Trail = () => {
   return (
     <View style={styles.container}>
-      <Text>Community</Text>
+      <Text>Trail</Text>
     </View>
   );
 };
 
-export default Community;
+export default Trail;
 
 const styles = StyleSheet.create({
   container: {

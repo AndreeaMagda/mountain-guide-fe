@@ -1,15 +1,15 @@
 import { StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 
-const Community = () => {
+const Gear = () => {
   return (
     <View style={styles.container}>
-      <Text>Community</Text>
+      <Text>Gear</Text>
     </View>
   );
 };
 
-export default Community;
+export default Gear;
 
 const styles = StyleSheet.create({
   container: {

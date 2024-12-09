@@ -12,6 +12,7 @@ import { Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import { useHeaderHeight } from '@react-navigation/elements';
+import QuickActions from '@/components/QuickActions';
 
 const Page = () => {
   const headerHeight = useHeaderHeight();
@@ -61,6 +62,7 @@ const Page = () => {
             <Ionicons name="filter" size={18} color={Colors.White} />
           </TouchableOpacity>
         </View>
+        <QuickActions />
       </View>
     </>
   );

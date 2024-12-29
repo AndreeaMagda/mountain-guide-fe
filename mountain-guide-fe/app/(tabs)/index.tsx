@@ -1,21 +1,65 @@
 import {
   StyleSheet,
   Text,
-  Touchable,
   TouchableOpacity,
   View,
   Image,
   TextInput,
 } from 'react-native';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import { useHeaderHeight } from '@react-navigation/elements';
 import QuickActions from '@/components/QuickActions';
+import MapView, { Marker } from 'react-native-maps';
+import * as Location from 'expo-location';
+
+interface LocationType {
+  latitude: number;
+  longitude: number;
+  latitudeDelta: number;
+  longitudeDelta: number;
+}
 
 const Page = () => {
   const headerHeight = useHeaderHeight();
+
+  const [location, setLocation] = useState<LocationType | null>(null);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  useEffect(() => {
+    const getLocation = async () => {
+      try {
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== 'granted') {
+          setErrorMsg('Permission to access location was denied');
+          return;
+        }
+
+        const userLocation = await Location.getCurrentPositionAsync({});
+        setLocation({
+          latitude: userLocation.coords.latitude,
+          longitude: userLocation.coords.longitude,
+          latitudeDelta: 0.0922, // Zoom level for latitude
+          longitudeDelta: 0.0421, // Zoom level for longitude
+        });
+      } catch (error) {
+        setErrorMsg('Failed to get location');
+      }
+    };
+
+    getLocation();
+  }, []);
+
+  if (errorMsg) {
+    return <Text>{errorMsg}</Text>;
+  }
+
+  if (!location) {
+    return <Text>Loading...</Text>;
+  }
+
   return (
     <>
       <Stack.Screen
@@ -37,7 +81,6 @@ const Page = () => {
               onPress={() => {}}
               style={{
                 marginRight: 20,
-
                 padding: 10,
                 borderRadius: 10,
               }}
@@ -63,6 +106,18 @@ const Page = () => {
           </TouchableOpacity>
         </View>
         <QuickActions />
+        <View style={styles.containerMap}>
+          <MapView style={styles.map} region={location}>
+            {/* Marker for current location */}
+            <Marker
+              coordinate={{
+                latitude: location.latitude,
+                longitude: location.longitude,
+              }}
+              title="Your Location"
+            />
+          </MapView>
+        </View>
       </View>
     </>
   );
@@ -100,5 +155,14 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 10,
     marginLeft: 10,
+  },
+  containerMap: {
+    flex: 1,
+    marginTop: 20,
+  },
+  map: {
+    width: '100%',
+    height: '70%',
+    marginBottom: 20,
   },
 });

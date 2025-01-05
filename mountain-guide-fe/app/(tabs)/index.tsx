@@ -5,6 +5,7 @@ import {
   View,
   Image,
   TextInput,
+  ScrollView,
 } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { Stack } from 'expo-router';
@@ -22,11 +23,37 @@ interface LocationType {
   longitudeDelta: number;
 }
 
+interface Place {
+  name: string;
+  description: string;
+}
+
 const Page = () => {
   const headerHeight = useHeaderHeight();
 
   const [location, setLocation] = useState<LocationType | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  // Suggested places to display in cards
+  const suggestedPlaces: Place[] = [
+    {
+      name: 'Vf Moldoveanu',
+      description: 'Highest peak in Romania, located in the Făgăraș Mountains.',
+    },
+    {
+      name: 'Vf Suranu',
+      description: 'A beautiful peak in the Parâng Mountains.',
+    },
+    {
+      name: 'Vf Vanatoarea lui Buteanu',
+      description: 'A scenic peak in the Făgăraș Mountains.',
+    },
+    {
+      name: 'Piatra Craiului',
+      description:
+        'Renowned for its stunning ridgeline and a popular destination for hikers.',
+    },
+  ];
 
   useEffect(() => {
     const getLocation = async () => {
@@ -41,8 +68,8 @@ const Page = () => {
         setLocation({
           latitude: userLocation.coords.latitude,
           longitude: userLocation.coords.longitude,
-          latitudeDelta: 0.0922, // Zoom level for latitude
-          longitudeDelta: 0.0421, // Zoom level for longitude
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
         });
       } catch (error) {
         setErrorMsg('Failed to get location');
@@ -118,6 +145,19 @@ const Page = () => {
             />
           </MapView>
         </View>
+        {/* Suggested places section */}
+        <Text style={styles.sectionTitle}>Most Visited Peaks</Text>
+        <ScrollView style={styles.suggestedPlacesContainer}>
+          {suggestedPlaces.map((place, index) => (
+            <View key={index} style={styles.card}>
+              <Text style={styles.cardTitle}>{place.name}</Text>
+              <Text style={styles.cardDescription}>{place.description}</Text>
+              <TouchableOpacity style={styles.cardButton}>
+                <Text style={styles.cardButtonText}>View Details</Text>
+              </TouchableOpacity>
+            </View>
+          ))}
+        </ScrollView>
       </View>
     </>
   );
@@ -151,7 +191,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   filterBtn: {
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.primary,
     padding: 12,
     borderRadius: 10,
     marginLeft: 10,
@@ -162,7 +202,49 @@ const styles = StyleSheet.create({
   },
   map: {
     width: '100%',
-    height: '70%',
+    height: '50%',
     marginBottom: 20,
+  },
+  suggestedPlacesContainer: {
+    marginTop: 20,
+  },
+  sectionTitle: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: Colors.black,
+    marginBottom: 10,
+  },
+  card: {
+    backgroundColor: Colors.white,
+    padding: 15,
+    borderRadius: 10,
+    marginBottom: 15,
+    shadowColor: Colors.black,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  cardTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: Colors.black,
+  },
+  cardDescription: {
+    fontSize: 14,
+    color: Colors.darkGray,
+    marginVertical: 5,
+  },
+  cardButton: {
+    marginTop: 10,
+    backgroundColor: Colors.primary,
+    paddingVertical: 8,
+    paddingHorizontal: 15,
+    borderRadius: 10,
+  },
+  cardButtonText: {
+    color: Colors.white,
+    textAlign: 'center',
+    fontWeight: '600',
   },
 });

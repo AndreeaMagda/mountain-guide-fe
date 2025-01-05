@@ -46,6 +46,14 @@ export default function Layout() {
           ),
         }}
       />
+      <Tabs.Screen
+        name="tripPlanner"
+        options={{
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="walk" size={28} color={color} />
+          ),
+        }}
+      />
     </Tabs>
   );
 }

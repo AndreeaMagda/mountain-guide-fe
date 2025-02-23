@@ -1,11 +1,15 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { router } from 'expo-router';
-import MapView from 'react-native-maps';
+import MapView, { Marker } from 'react-native-maps';
+import * as Location from 'expo-location';
 
 const ActiveHike = () => {
   const [seconds, setSeconds] = useState(0);
   const [isActive, setIsActive] = useState(true);
+  const [location, setLocation] = useState<Location.LocationObject | null>(
+    null
+  );
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -18,6 +22,32 @@ const ActiveHike = () => {
 
     return () => clearInterval(interval);
   }, [isActive]);
+
+  useEffect(() => {
+    const startLocationTracking = async () => {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        alert('Permission to access location was denied');
+        return;
+      }
+
+      const location = await Location.getCurrentPositionAsync({});
+      setLocation(location);
+
+      Location.watchPositionAsync(
+        {
+          accuracy: Location.Accuracy.High,
+          timeInterval: 5000,
+          distanceInterval: 10,
+        },
+        (newLocation) => {
+          setLocation(newLocation);
+        }
+      );
+    };
+
+    startLocationTracking();
+  }, []);
 
   const formatTime = (totalSeconds: number) => {
     const hours = Math.floor(totalSeconds / 3600);
@@ -33,12 +63,23 @@ const ActiveHike = () => {
       <MapView
         style={styles.map}
         initialRegion={{
-          latitude: 45.8333,
-          longitude: 24.25,
+          latitude: location?.coords.latitude || 45.8333,
+          longitude: location?.coords.longitude || 24.25,
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
         }}
-      />
+        showsUserLocation
+        followsUserLocation
+      >
+        {location && (
+          <Marker
+            coordinate={{
+              latitude: location.coords.latitude,
+              longitude: location.coords.longitude,
+            }}
+          />
+        )}
+      </MapView>
 
       <View style={styles.statsContainer}>
         <Text style={styles.statsText}>Distance: 0.0 km</Text>

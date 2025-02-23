@@ -1,8 +1,13 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { router } from 'expo-router';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker, Polyline } from 'react-native-maps';
 import * as Location from 'expo-location';
+
+interface Coordinate {
+  latitude: number;
+  longitude: number;
+}
 
 const ActiveHike = () => {
   const [seconds, setSeconds] = useState(0);
@@ -10,6 +15,27 @@ const ActiveHike = () => {
   const [location, setLocation] = useState<Location.LocationObject | null>(
     null
   );
+  const [routeCoordinates, setRouteCoordinates] = useState<Coordinate[]>([]);
+  const [distance, setDistance] = useState(0);
+
+  const calculateDistance = (
+    lat1: number,
+    lon1: number,
+    lat2: number,
+    lon2: number
+  ) => {
+    const R = 6371; // Earth's radius in km
+    const dLat = ((lat2 - lat1) * Math.PI) / 180;
+    const dLon = ((lon2 - lon1) * Math.PI) / 180;
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos((lat1 * Math.PI) / 180) *
+        Math.cos((lat2 * Math.PI) / 180) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  };
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -33,6 +59,12 @@ const ActiveHike = () => {
 
       const location = await Location.getCurrentPositionAsync({});
       setLocation(location);
+      setRouteCoordinates([
+        {
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+        },
+      ]);
 
       Location.watchPositionAsync(
         {
@@ -42,6 +74,29 @@ const ActiveHike = () => {
         },
         (newLocation) => {
           setLocation(newLocation);
+          setRouteCoordinates((prevCoordinates) => {
+            const newCoords = [
+              ...prevCoordinates,
+              {
+                latitude: newLocation.coords.latitude,
+                longitude: newLocation.coords.longitude,
+              },
+            ];
+
+            // Calculate new distance
+            if (prevCoordinates.length > 0) {
+              const lastCoord = prevCoordinates[prevCoordinates.length - 1];
+              const newDistance = calculateDistance(
+                lastCoord.latitude,
+                lastCoord.longitude,
+                newLocation.coords.latitude,
+                newLocation.coords.longitude
+              );
+              setDistance((d) => d + newDistance);
+            }
+
+            return newCoords;
+          });
         }
       );
     };
@@ -71,18 +126,15 @@ const ActiveHike = () => {
         showsUserLocation
         followsUserLocation
       >
-        {location && (
-          <Marker
-            coordinate={{
-              latitude: location.coords.latitude,
-              longitude: location.coords.longitude,
-            }}
-          />
-        )}
+        <Polyline
+          coordinates={routeCoordinates}
+          strokeColor="#FF0000"
+          strokeWidth={3}
+        />
       </MapView>
 
       <View style={styles.statsContainer}>
-        <Text style={styles.statsText}>Distance: 0.0 km</Text>
+        <Text style={styles.statsText}>Distance: {distance.toFixed(2)} km</Text>
         <Text style={styles.statsText}>Duration: {formatTime(seconds)}</Text>
       </View>
 

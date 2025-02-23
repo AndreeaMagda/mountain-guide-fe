@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import React from 'react';
 import MapView, { Marker } from 'react-native-maps';
+import { router } from 'expo-router';
 
 const Trail = () => {
   const trailLocation = {
@@ -45,6 +46,10 @@ const Trail = () => {
   const renderPhoto = ({ item }: { item: string }) => (
     <Image source={{ uri: item }} style={styles.galleryImage} />
   );
+
+  const handleStartHike = () => {
+    router.push('/active-hike');
+  };
 
   return (
     <View style={styles.mainContainer}>
@@ -108,7 +113,7 @@ const Trail = () => {
         </View>
       </ScrollView>
 
-      <TouchableOpacity style={styles.startButton}>
+      <TouchableOpacity style={styles.startButton} onPress={handleStartHike}>
         <Text style={styles.startButtonText}>Start Hike</Text>
       </TouchableOpacity>
     </View>

@@ -25,6 +25,23 @@ const Trail = () => {
     'https://images.unsplash.com/photo-1551632810-549c4b3baf81',
   ];
 
+  const reviews = [
+    {
+      id: '1',
+      user: 'John D.',
+      rating: 5,
+      comment: 'Beautiful trail with amazing views!',
+      date: '2024-03-15',
+    },
+    {
+      id: '2',
+      user: 'Sarah M.',
+      rating: 4,
+      comment: 'Great hike, well maintained path.',
+      date: '2024-03-10',
+    },
+  ];
+
   const renderPhoto = ({ item }: { item: string }) => (
     <Image source={{ uri: item }} style={styles.galleryImage} />
   );
@@ -72,6 +89,22 @@ const Trail = () => {
             showsHorizontalScrollIndicator={false}
             keyExtractor={(item, index) => index.toString()}
           />
+        </View>
+
+        <View style={styles.reviewsContainer}>
+          <Text style={styles.sectionTitle}>Reviews</Text>
+          {reviews.map((review) => (
+            <View key={review.id} style={styles.reviewCard}>
+              <View style={styles.reviewHeader}>
+                <Text style={styles.reviewUser}>{review.user}</Text>
+                <Text style={styles.reviewDate}>{review.date}</Text>
+              </View>
+              <Text style={styles.reviewRating}>
+                {'⭐'.repeat(review.rating)}
+              </Text>
+              <Text style={styles.reviewComment}>{review.comment}</Text>
+            </View>
+          ))}
         </View>
       </ScrollView>
 
@@ -149,6 +182,34 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  reviewsContainer: {
+    padding: 20,
+    paddingTop: 0,
+  },
+  reviewCard: {
+    backgroundColor: '#f5f5f5',
+    padding: 15,
+    borderRadius: 10,
+    marginBottom: 10,
+  },
+  reviewHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 5,
+  },
+  reviewUser: {
+    fontWeight: 'bold',
+  },
+  reviewDate: {
+    color: '#666',
+  },
+  reviewRating: {
+    marginBottom: 5,
+  },
+  reviewComment: {
+    fontSize: 14,
+    lineHeight: 20,
   },
 });
 

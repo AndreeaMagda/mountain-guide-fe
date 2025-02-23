@@ -8,7 +8,7 @@ import {
   ScrollView,
 } from 'react-native';
 import React, { useState, useEffect } from 'react';
-import { Stack } from 'expo-router';
+import { Stack, router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import { useHeaderHeight } from '@react-navigation/elements';
@@ -335,5 +335,18 @@ const styles = StyleSheet.create({
   },
   clearButton: {
     padding: 5,
+  },
+  trailButton: {
+    backgroundColor: Colors.primary,
+    padding: 15,
+    borderRadius: 10,
+    marginTop: 20,
+    marginBottom: 10,
+  },
+  trailButtonText: {
+    color: Colors.white,
+    textAlign: 'center',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });

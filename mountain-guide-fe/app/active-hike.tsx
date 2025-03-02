@@ -1,10 +1,11 @@
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { router, Stack } from 'expo-router';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { Ionicons } from '@expo/vector-icons';
 import { calculateDistance } from '../utils/distance';
+import { styles } from '../styles/style-active-hike';
 interface Coordinate {
   latitude: number;
   longitude: number;
@@ -159,60 +160,5 @@ const ActiveHike = () => {
     </>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  map: {
-    flex: 1,
-  },
-  statsContainer: {
-    position: 'absolute',
-    top: 50,
-    left: 20,
-    right: 20,
-    backgroundColor: 'white',
-    padding: 15,
-    borderRadius: 10,
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-  },
-  statsText: {
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  buttonContainer: {
-    position: 'absolute',
-    bottom: 30,
-    left: 20,
-    right: 20,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  pauseButton: {
-    backgroundColor: '#4CAF50',
-    padding: 16,
-    borderRadius: 50,
-    width: 60,
-    height: 60,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  endButton: {
-    backgroundColor: '#FF4444',
-    padding: 16,
-    borderRadius: 10,
-    flex: 1,
-    marginLeft: 20,
-    alignItems: 'center',
-  },
-  endButtonText: {
-    color: 'white',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-});
 
 export default ActiveHike;

@@ -35,9 +35,9 @@ const ActiveHike = () => {
 
   useEffect(() => {
     const startLocationTracking = async () => {
-      const { status } = await Location.requestForegroundPermissionsAsync();
+      const { status } = await Location.getForegroundPermissionsAsync();
       if (status !== 'granted') {
-        alert('Permission to access location was denied');
+        alert('Location permission is required for tracking your hike');
         return;
       }
 

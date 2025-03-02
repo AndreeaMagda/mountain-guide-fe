@@ -25,13 +25,11 @@ describe('Distance Calculation Tests', () => {
   });
 
   test('should return zero for same point', () => {
-    // Arrange
     const point = {
       lat: 45.5975,
       lon: 24.7425,
     };
 
-    // Act
     const distance = calculateDistance(
       point.lat,
       point.lon,
@@ -39,12 +37,10 @@ describe('Distance Calculation Tests', () => {
       point.lon
     );
 
-    // Assert
     expect(distance).toBe(0);
   });
 
   test('should calculate distance between two mountain peaks', () => {
-    // Arrange
     const moldoveanu = {
       lat: 45.5975,
       lon: 24.7425,
@@ -54,7 +50,6 @@ describe('Distance Calculation Tests', () => {
       lon: 24.7156,
     };
 
-    // Act
     const distance = calculateDistance(
       moldoveanu.lat,
       moldoveanu.lon,
@@ -62,7 +57,6 @@ describe('Distance Calculation Tests', () => {
       negoiu.lon
     );
 
-    // Assert
     expect(distance).toBeGreaterThan(2.5);
     expect(distance).toBeLessThan(3.5);
   });

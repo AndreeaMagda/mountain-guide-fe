@@ -4,7 +4,7 @@ import { router, Stack } from 'expo-router';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { Ionicons } from '@expo/vector-icons';
-import { calculateDistance } from '../utils/distance';
+import { calculateDistance, formatTime } from '../utils/reusableFunctions';
 import { styles } from '../styles/style-active-hike';
 interface Coordinate {
   latitude: number;
@@ -19,7 +19,6 @@ const ActiveHike = () => {
   );
   const [routeCoordinates, setRouteCoordinates] = useState<Coordinate[]>([]);
   const [distance, setDistance] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -67,7 +66,6 @@ const ActiveHike = () => {
               },
             ];
 
-            // Calculate new distance
             if (prevCoordinates.length > 0) {
               const lastCoord = prevCoordinates[prevCoordinates.length - 1];
               const newDistance = calculateDistance(
@@ -76,7 +74,8 @@ const ActiveHike = () => {
                 newLocation.coords.latitude,
                 newLocation.coords.longitude
               );
-              setDistance((d) => d + newDistance);
+              const updatedDistance = distance + newDistance;
+              setDistance(updatedDistance);
             }
 
             return newCoords;
@@ -88,18 +87,8 @@ const ActiveHike = () => {
     startLocationTracking();
   }, []);
 
-  const formatTime = (totalSeconds: number) => {
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
-    return `${hours.toString().padStart(2, '0')}:${minutes
-      .toString()
-      .padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-  };
-
   const togglePause = () => {
-    setIsPaused(!isPaused);
-    setIsActive(!isPaused); // This will stop/start the timer
+    setIsActive(!isActive);
   };
 
   return (
@@ -140,7 +129,7 @@ const ActiveHike = () => {
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.pauseButton} onPress={togglePause}>
             <Ionicons
-              name={isPaused ? 'play' : 'pause'}
+              name={isActive ? 'pause' : 'play'}
               size={24}
               color="white"
             />

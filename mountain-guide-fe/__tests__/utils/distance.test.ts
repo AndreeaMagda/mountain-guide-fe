@@ -1,4 +1,4 @@
-import { calculateDistance } from '../../utils/distance';
+import { calculateDistance } from '../../utils/reusableFunctions';
 
 describe('Distance Calculation Tests', () => {
   test('should calculate a simple distance', () => {
